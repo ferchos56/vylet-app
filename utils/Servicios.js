@@ -1,0 +1,1 @@
+export const SERVICIOS = ['Wi-Fi', 'Parqueadero', 'Comida', 'Baños', 'Zona infantil', 'Mascotas', 'Accesibilidad'];
