@@ -15,7 +15,7 @@ import { useAuth } from '../../../contextos/authProvider';
 
 const { width } = Dimensions.get('window');
 
-export default function detallesFiestas() {
+export default function DetallesFiestas() {
   const {userToken, checkUserToken} = useAuth();
   const navigation = useNavigation();
   const [bannerIndex, setBannerIndex] = useState(0);
