@@ -9,72 +9,77 @@ import {
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useAdmin } from '../../../contextos/AdminProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {colors} from '../../../styles/colors'
 import CargandoOverlay from '../../CargandoOverlay';
 
 const ITEMS_POR_PAGINA = 6;
 
-const EdicionComponenteCiudad = ({ onCancelForm }) => {
+const EdicionComponenteHotel = ({ onCancelForm }) => {
   const {
-    ciudades = [],
-    obtenerCiudades,
     cargando,
     paginaActual,
     totalPaginas,
     setPaginaActual,
+    obtenerHoteles,
+    hoteles
   } = useAdmin();
 
   const navigation = useNavigation();
   const [navegando, setNavegando] = useState(false);
   const [busqueda, setBusqueda] = useState('');
-  const [filtradas, setFiltradas] = useState([]);
+  const [hotelesFiltrados, setHotelesFiltrados] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
       setNavegando(false);
-      obtenerCiudades(paginaActual, ITEMS_POR_PAGINA);
+      obtenerHoteles(paginaActual, ITEMS_POR_PAGINA);
     }, [paginaActual])
   );
 
   useEffect(() => {
     const texto = busqueda.toLowerCase();
-    const resultado = ciudades.filter((c) =>
-      c.nombre_ciud?.toLowerCase().includes(texto)
+    const filtrados = hoteles.filter((h) =>
+      h.nombre_hotel?.toLowerCase().includes(texto)
     );
-    setFiltradas(resultado);
-  }, [busqueda, ciudades]);
+    setHotelesFiltrados(filtrados);
+  }, [busqueda, hoteles]);
 
   const handleNavigate = (id) => {
     if (navegando || !id) return;
     setNavegando(true);
-    navigation.navigate('formularioEdicionCiudad', { id });
+    navigation.navigate('formularioEdicionHoteles', { id });
   };
 
-  const renderCiudad = (item, key) => (
-    <View style={styles.itemContainer} key={item.id_ciudad || key}>
+  const renderHotel = (item, key) => (
+    <View style={styles.itemContainer} key={item.id_hotel || key}>
       <TouchableOpacity
-        style={styles.ciudades}
-        onPress={() => handleNavigate(item.id_ciudad)}
+        style={styles.hoteles}
+        onPress={() => handleNavigate(item.id_hotel)}
         disabled={navegando}
       >
         <View style={styles.containerDescription}>
-          <Text style={styles.nombre}>{item.nombre_ciud}</Text>
+          <Text style={styles.nombre}>{item.nombre_hotel}</Text>
           <Text style={styles.subtitulo}>Edición</Text>
         </View>
       </TouchableOpacity>
     </View>
   );
 
-  if (cargando) return <CargandoOverlay />;
+  if (cargando) return (<SafeAreaView>
+    <CargandoOverlay />
+  </SafeAreaView>);
 
-  const lista = busqueda ? filtradas : ciudades;
+  const listaHoteles = busqueda ? hotelesFiltrados : hoteles;
 
   return (
+    
     <View style={styles.containerBoxes}>
-      <Text style={styles.titles}>Ciudades</Text>
+      <Text style={styles.titles}>Hoteles</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="🔍 Buscar por nombre"
+        placeholder="🔍 Buscar hotel por nombre"
         placeholderTextColor="#aaa"
         value={busqueda}
         onChangeText={setBusqueda}
@@ -82,12 +87,12 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
       {navegando ? (
         <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 10 }} />
-      ) : ciudades.length === 0 ? (
-        <Text style={styles.emptyText}>No hay ciudades registradas.</Text>
-      ) : lista.length === 0 ? (
+      ) : hoteles.length === 0 ? (
+        <Text style={styles.emptyText}>No hay hoteles registrados.</Text>
+      ) : listaHoteles.length === 0 ? (
         <Text style={styles.emptyText}>No se encontraron coincidencias con “{busqueda}”.</Text>
       ) : (
-        lista.map(renderCiudad)
+        listaHoteles.map(renderHotel)
       )}
 
       {totalPaginas > 1 && (
@@ -127,8 +132,7 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
 const styles = StyleSheet.create({
   containerBoxes: {
-    marginBottom: 20,
-    
+    marginBottom: 20,    
   },
   input: {
     backgroundColor: '#ffffff1e',
@@ -140,7 +144,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     marginBottom: 10,
   },
-  ciudades: {
+  hoteles: {
     width: '100%',
     borderTopLeftRadius: 10,
   },
@@ -208,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EdicionComponenteCiudad;
+export default EdicionComponenteHotel;

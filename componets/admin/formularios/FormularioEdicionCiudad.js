@@ -8,7 +8,6 @@ import {
   Image,
   TextInput,
   ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -23,7 +22,6 @@ const GridFotos = ({ id, onChange }) => {
   const { ciudades } = useAdmin();
   const [banner, setBanner] = useState(null);
   const [portada, setPortada] = useState(null);
-  // const [otras, setOtras] = useState([]);
 
   const handleFotos = () => {
     const ciudadSeleccionada = ciudades.find((c) => c.id_ciudad === id);
@@ -43,7 +41,6 @@ const GridFotos = ({ id, onChange }) => {
     if (!resultado.canceled) {
       if (tipo === 'banner') setBanner(resultado.assets[0]);
       else if (tipo === 'portada') setPortada(resultado.assets[0]);
-      // else if (tipo === 'otras') setOtras(resultado.assets);
     }
   };
 
@@ -96,24 +93,6 @@ const GridFotos = ({ id, onChange }) => {
           {portada ? (<Image source={getImageSource(portada)} style={styles.portada} />) : (<Text style={{ color: '#fff' }}>Portada</Text>)}
         </TouchableOpacity>
       </View>
-
-      {/* <View style={styles.containerBoxes}>
-        <TouchableOpacity
-          style={styles.touchableItemImage}
-          onPress={() => seleccionarImagenes('otras')}
-        >
-          <Text style={{ color: '#fff' }}>Subir mas fotos</Text>
-
-        </TouchableOpacity>
-      </View> */}
-
-      {/* <View style={styles.grid}>
-        {otras.map((img, index) => (
-          <View key={index} style={styles.item}>
-            <Image source={{ uri: img.uri }} style={styles.image} />
-          </View>
-        ))}
-      </View> */}
     </View>
   );
 };
@@ -142,8 +121,6 @@ function FormularioEdicionCiudad({ onCancelForm }) {
   const [imagenes, setImagenes] = useState({ banner: null, portada: null });
   const [cargando, setCargando] = useState(true);
   const [regionCiud, setRegionCiud] = useState('');
-
-  // const [otras, setOtras] = useState([]);
 
 
   const editarCiudad = async () => {
@@ -385,6 +362,7 @@ function FormularioEdicionCiudad({ onCancelForm }) {
 
           <MapView
             ref={mapRef}
+            provider="google"
             style={{ height: 200, marginVertical: 20 }}
             region={region}
             onPress={(e) => {

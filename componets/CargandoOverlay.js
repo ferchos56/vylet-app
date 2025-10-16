@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, Dimensions, Text } from 'react-native';
 
-const CargandoOverlay = () => {
+const CargandoOverlay = ({message}) => {
   return (
     <View style={styles.overlay}>
       <ActivityIndicator size={45} color="#fff"  />
-      <Text style={styles.textos}>Cargando...</Text>
+      {message ? <Text style={{...styles.textos}}>{message}...</Text> : <Text style={styles.textos}>Cargando...</Text>}
+      
     </View>
   );
 };
@@ -13,10 +14,11 @@ const CargandoOverlay = () => {
 const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
-    width: Dimensions.get('window').width - 30,
-    height: Dimensions.get('window').height - 170,    
+    width: Dimensions.get('window').width ,
+    height: Dimensions.get('window').height ,    
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(6, 21, 41)',
     zIndex: 9999,    
   },
   textos: {

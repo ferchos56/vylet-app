@@ -179,6 +179,7 @@ function FormularioCiudad({ onCancelForm }) {
     }
   };
 
+
   return (
     <View style={{ padding: 10 }}>
       <Text style={{ ...styles.titles, fontSize: 18, marginBottom: 30 }}>Formulario para ciudades</Text>
@@ -217,6 +218,7 @@ function FormularioCiudad({ onCancelForm }) {
 
            <MapView
         ref={mapRef}
+        provider="google"
         style={{ height: 200, marginVertical: 20 }}
         region={region}
         onPress={(e) => {

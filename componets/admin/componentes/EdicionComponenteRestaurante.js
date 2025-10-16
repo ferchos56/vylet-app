@@ -13,51 +13,51 @@ import CargandoOverlay from '../../CargandoOverlay';
 
 const ITEMS_POR_PAGINA = 6;
 
-const EdicionComponenteCiudad = ({ onCancelForm }) => {
+const EdicionComponenteRestaurante = ({ onCancelForm }) => {
   const {
-    ciudades = [],
-    obtenerCiudades,
     cargando,
     paginaActual,
     totalPaginas,
     setPaginaActual,
+    obtenerRestaurantes,
+    restaurantes
   } = useAdmin();
 
   const navigation = useNavigation();
   const [navegando, setNavegando] = useState(false);
   const [busqueda, setBusqueda] = useState('');
-  const [filtradas, setFiltradas] = useState([]);
+  const [filtrados, setFiltrados] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
       setNavegando(false);
-      obtenerCiudades(paginaActual, ITEMS_POR_PAGINA);
+      obtenerRestaurantes(paginaActual, ITEMS_POR_PAGINA);
     }, [paginaActual])
   );
 
   useEffect(() => {
     const texto = busqueda.toLowerCase();
-    const resultado = ciudades.filter((c) =>
-      c.nombre_ciud?.toLowerCase().includes(texto)
+    const resultado = restaurantes.filter((r) =>
+      r.nombre_rest?.toLowerCase().includes(texto)
     );
-    setFiltradas(resultado);
-  }, [busqueda, ciudades]);
+    setFiltrados(resultado);
+  }, [busqueda, restaurantes]);
 
   const handleNavigate = (id) => {
     if (navegando || !id) return;
     setNavegando(true);
-    navigation.navigate('formularioEdicionCiudad', { id });
+    navigation.navigate('formularioEdicionRestaurante', { id });
   };
 
-  const renderCiudad = (item, key) => (
-    <View style={styles.itemContainer} key={item.id_ciudad || key}>
+  const renderRestaurante = (item, key) => (
+    <View style={styles.itemContainer} key={item.id_rest || key}>
       <TouchableOpacity
-        style={styles.ciudades}
-        onPress={() => handleNavigate(item.id_ciudad)}
+        style={styles.restaurantes}
+        onPress={() => handleNavigate(item.id_rest)}
         disabled={navegando}
       >
         <View style={styles.containerDescription}>
-          <Text style={styles.nombre}>{item.nombre_ciud}</Text>
+          <Text style={styles.nombre}>{item.nombre_rest || 'Sin nombre'}</Text>
           <Text style={styles.subtitulo}>Edición</Text>
         </View>
       </TouchableOpacity>
@@ -66,11 +66,11 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
   if (cargando) return <CargandoOverlay />;
 
-  const lista = busqueda ? filtradas : ciudades;
+  const lista = busqueda ? filtrados : restaurantes;
 
   return (
     <View style={styles.containerBoxes}>
-      <Text style={styles.titles}>Ciudades</Text>
+      <Text style={styles.titles}>Restaurantes</Text>
 
       <TextInput
         style={styles.input}
@@ -82,12 +82,12 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
       {navegando ? (
         <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 10 }} />
-      ) : ciudades.length === 0 ? (
-        <Text style={styles.emptyText}>No hay ciudades registradas.</Text>
+      ) : restaurantes.length === 0 ? (
+        <Text style={styles.emptyText}>No hay restaurantes registrados.</Text>
       ) : lista.length === 0 ? (
         <Text style={styles.emptyText}>No se encontraron coincidencias con “{busqueda}”.</Text>
       ) : (
-        lista.map(renderCiudad)
+        lista.map(renderRestaurante)
       )}
 
       {totalPaginas > 1 && (
@@ -128,7 +128,7 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 const styles = StyleSheet.create({
   containerBoxes: {
     marginBottom: 20,
-    
+   
   },
   input: {
     backgroundColor: '#ffffff1e',
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     marginBottom: 10,
   },
-  ciudades: {
+  restaurantes: {
     width: '100%',
     borderTopLeftRadius: 10,
   },
@@ -208,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EdicionComponenteCiudad;
+export default EdicionComponenteRestaurante;

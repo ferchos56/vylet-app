@@ -13,14 +13,14 @@ import CargandoOverlay from '../../CargandoOverlay';
 
 const ITEMS_POR_PAGINA = 6;
 
-const EdicionComponenteCiudad = ({ onCancelForm }) => {
+const EdicionComponenteDiversion = ({ onCancelForm }) => {
   const {
-    ciudades = [],
-    obtenerCiudades,
     cargando,
     paginaActual,
     totalPaginas,
     setPaginaActual,
+    obtenerDiversion,
+    diversiones
   } = useAdmin();
 
   const navigation = useNavigation();
@@ -31,33 +31,33 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
   useFocusEffect(
     useCallback(() => {
       setNavegando(false);
-      obtenerCiudades(paginaActual, ITEMS_POR_PAGINA);
+      obtenerDiversion(paginaActual, ITEMS_POR_PAGINA);
     }, [paginaActual])
   );
 
   useEffect(() => {
     const texto = busqueda.toLowerCase();
-    const resultado = ciudades.filter((c) =>
-      c.nombre_ciud?.toLowerCase().includes(texto)
+    const resultado = diversiones.filter((d) =>
+      d.nombre_diver?.toLowerCase().includes(texto)
     );
     setFiltradas(resultado);
-  }, [busqueda, ciudades]);
+  }, [busqueda, diversiones]);
 
   const handleNavigate = (id) => {
     if (navegando || !id) return;
     setNavegando(true);
-    navigation.navigate('formularioEdicionCiudad', { id });
+    navigation.navigate('formularioEdicionDiversion', { id });
   };
 
-  const renderCiudad = (item, key) => (
-    <View style={styles.itemContainer} key={item.id_ciudad || key}>
+  const renderDiversion = (item, key) => (
+    <View style={styles.itemContainer} key={item.id_diver || key}>
       <TouchableOpacity
-        style={styles.ciudades}
-        onPress={() => handleNavigate(item.id_ciudad)}
+        style={styles.diversiones}
+        onPress={() => handleNavigate(item.id_diver)}
         disabled={navegando}
       >
         <View style={styles.containerDescription}>
-          <Text style={styles.nombre}>{item.nombre_ciud}</Text>
+          <Text style={styles.nombre}>{item.nombre_diver}</Text>
           <Text style={styles.subtitulo}>Edición</Text>
         </View>
       </TouchableOpacity>
@@ -66,11 +66,11 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
   if (cargando) return <CargandoOverlay />;
 
-  const lista = busqueda ? filtradas : ciudades;
+  const lista = busqueda ? filtradas : diversiones;
 
   return (
     <View style={styles.containerBoxes}>
-      <Text style={styles.titles}>Ciudades</Text>
+      <Text style={styles.titles}>Diversiones</Text>
 
       <TextInput
         style={styles.input}
@@ -82,12 +82,12 @@ const EdicionComponenteCiudad = ({ onCancelForm }) => {
 
       {navegando ? (
         <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 10 }} />
-      ) : ciudades.length === 0 ? (
-        <Text style={styles.emptyText}>No hay ciudades registradas.</Text>
+      ) : diversiones.length === 0 ? (
+        <Text style={styles.emptyText}>No hay diversiones registradas.</Text>
       ) : lista.length === 0 ? (
         <Text style={styles.emptyText}>No se encontraron coincidencias con “{busqueda}”.</Text>
       ) : (
-        lista.map(renderCiudad)
+        lista.map(renderDiversion)
       )}
 
       {totalPaginas > 1 && (
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     marginBottom: 10,
   },
-  ciudades: {
+  diversiones: {
     width: '100%',
     borderTopLeftRadius: 10,
   },
@@ -208,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EdicionComponenteCiudad;
+export default EdicionComponenteDiversion;

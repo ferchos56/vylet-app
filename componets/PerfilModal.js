@@ -87,7 +87,7 @@ export default function PerfilModal() {
 
           <View style={styles.profileRow}>
             <Image
-              source={imagen ? { uri: imagen } : require('../assets/user.png')}
+              source={imagen ? { uri: imagen } : require('../assets/vyletlogo.jpg')}
               style={styles.profileImage}
             />
 
@@ -126,7 +126,12 @@ export default function PerfilModal() {
 
             {usuario?.tipo_usuario === 'admin' && (
               <>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('Drawer', { screen: 'Inicio' })} disabled={navegando}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Inicio' }],
+                  });
+                }} disabled={navegando}>
                   <Text style={styles.actionText}>Inicio</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('GestionUsuarios')} disabled={navegando}>

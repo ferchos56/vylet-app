@@ -11,10 +11,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 
-import FormularioDiversion from './formularios/FormularioDiversion'
+import FormularioDiversion from './formularios/hotel/FormularioHoteles'
 import FormularioCiudad from './formularios/FormularioCiudad';
-import FormularioHoteles from './formularios/FormularioHoteles';
+import FormularioHoteles from './formularios/hotel/FormularioHoteles';
+import FormularioRestaurante from './formularios/FormularioRestaurante'
 import EdicionComponenteCiudad from './componentes/EdicionComponenteCiudad';
+import EdicionComponenteDiversion from './componentes/EdicionComponenteDiversion';
+import EdicionComponenteHotel from './componentes/EdicionComponenteHotel';
+import EdicionComponenteRestaurante from './componentes/EdicionComponenteRestaurante';
+
 
 import { colors } from '../../styles/colors';
 import {useAdmin} from '../../contextos/AdminProvider'
@@ -101,12 +106,24 @@ export default function PanelAdmin() {
           {!mostrarSelector && categoria === 'ciudad' && enAgregar && (
             <FormularioCiudad onCancelForm={handleCancelForm} />
           )}
-
           {!mostrarSelector && categoria === 'diversion' && enAgregar && (
             <FormularioDiversion onCancelForm={handleCancelForm} />
           )}
+          {!mostrarSelector && categoria === 'restaurante' && enAgregar && (
+            <FormularioRestaurante onCancelForm={handleCancelForm} />
+          )}
+          
           {!mostrarSelector && categoria === 'ciudad' && enEditar && (
             <EdicionComponenteCiudad onCancelForm={handleCancelForm} />
+          )}
+          {!mostrarSelector && categoria === 'diversion' && enEditar && (
+            <EdicionComponenteDiversion onCancelForm={handleCancelForm} />
+          )}
+          {!mostrarSelector && categoria === 'hotel' && enEditar && (
+            <EdicionComponenteHotel onCancelForm={handleCancelForm} />
+          )}
+          {!mostrarSelector && categoria === 'restaurante' && enEditar && (
+            <EdicionComponenteRestaurante onCancelForm={handleCancelForm} />
           )}
         </View>
       </ScrollView>
@@ -117,7 +134,7 @@ export default function PanelAdmin() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0a1a2f',
+    backgroundColor: colors.contenedorBg,
   },
   scrollContent: {
     padding: 20,

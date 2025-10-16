@@ -16,7 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAdmin } from '../../../contextos/AdminProvider';
 import { useAuth } from '../../../contextos/authProvider';
 import { Picker } from '@react-native-picker/picker';
-import { SERVICIOS } from '../../../utils/Servicios';
+import { SERVICIOS_REST } from '../../../utils/Servicios';
 import CargandoOverlay from '../../CargandoOverlay'
 
 const GridFotos = ({ onChange }) => {
@@ -54,14 +54,6 @@ const GridFotos = ({ onChange }) => {
 
         onChange({ banner, portada, otras });
     }, [banner, portada, otras]);
-
-    useEffect(() => {
-        return () => {
-            setBanner(null);
-            setPortada(null);
-            setOtras([]);
-        };
-    }, []);
 
     return (
         <View style={styles.container}>
@@ -113,7 +105,7 @@ const GridFotos = ({ onChange }) => {
     );
 };
 
-function FormularioDiversion({ onCancelForm }) {
+function FormularioRestaurante({ onCancelForm }) {
     const { identificadorCi } = useAuth();
     const { region, buscarDireccion, direccion, setDireccion, setRegion, setCargando, cargando } = useAdmin();
 
@@ -129,6 +121,9 @@ function FormularioDiversion({ onCancelForm }) {
     const [paginaWeb, setPaginaWeb] = useState('');
     const [tiktok, setTiktok] = useState('');
     const [whatsapp, setWhatsapp] = useState('');
+    const [contacto, setContacto] = useState('');
+    const [celular, setCelular] = useState('');
+    const [ciudad, setCiudad] = useState('')
 
     const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
 
@@ -144,23 +139,31 @@ function FormularioDiversion({ onCancelForm }) {
 
     const mapRef = useRef(null);
 
-    const guardarDiversion = async () => {
+    const guardarRestaurante = async () => {
         setCargando(true)
         try {
             const formData = new FormData();
-            formData.append('nombre_diver', nombre);
-            formData.append('descrip_diver', descripcion);
-            formData.append('serv_dive', serviciosSeleccionados);
-            formData.append('latitud_ciud', region.latitude.toString());
-            formData.append('long_ciud', region.longitude.toString());
-            formData.append('ci_diver', identificadorCi);
+            formData.append('nombre_rest', nombre);
+            formData.append('informacion_rest', descripcion);
+            formData.append('serv_rest', serviciosSeleccionados);
+            formData.append('latit_rest', region.latitude.toString());
+            formData.append('long_rest', region.longitude.toString());
+            formData.append('ci_rest', identificadorCi);
+            formData.append('face_rest', facebook);
+            formData.append('inta_rest', instagram);
+            formData.append('What_rest', whatsapp);
+            formData.append('tiktok_rest', tiktok);
+            formData.append('pagina_rest', paginaWeb);
+            formData.append('contacto_rest', contacto);
+            formData.append('cel_rest', celular || '');
             formData.append('pais', pais || '');
-            formData.append('provin_ciud', provincia || '');
+            formData.append('provin_rest', provincia || '');
+            formData.append('ciud_rest', ciudad || '');
 
 
             const { banner, portada, otras } = imagenes;
             if (banner) {
-                formData.append('baner_diver', {
+                formData.append('baner_ret', {
                     uri: banner.uri,
                     name: 'banner.jpg',
                     type: 'image/jpeg',
@@ -168,7 +171,7 @@ function FormularioDiversion({ onCancelForm }) {
             }
 
             if (portada) {
-                formData.append('portada_diver', {
+                formData.append('portada_rest', {
                     uri: portada.uri,
                     name: 'portada.jpg',
                     type: 'image/jpeg',
@@ -179,7 +182,7 @@ function FormularioDiversion({ onCancelForm }) {
             if (otras) {
                 otras.forEach((img, index) => {
                     if (img?.uri) {
-                        formData.append(`img${index + 1}_diver`, {
+                        formData.append(`img${index + 1}_rest`, {
                             uri: img.uri,
                             name: `img${index + 1}.jpg`,
                             type: 'image/jpeg',
@@ -188,18 +191,8 @@ function FormularioDiversion({ onCancelForm }) {
                 });
             }
 
-            // formData._parts.forEach(([key, value]) => {
-            //     if (Array.isArray(value)) {
-            //         console.log(`🔹 ${key}: [${value.join(', ')}]`);
-            //     } else if (typeof value === 'object' && value?.uri) {
-            //         console.log(`🖼️ ${key}: { uri: ${value.uri}, name: ${value.name}, type: ${value.type} }`);
-            //     } else {
-            //         console.log(`🔸 ${key}: ${value}`);
-            //     }
-            // });
 
-
-            const res = await fetch(`${API_URL}/diversion`, {
+            const res = await fetch(`${API_URL}/restaurantes`, {
                 method: 'POST',
                 body: formData,
 
@@ -208,33 +201,28 @@ function FormularioDiversion({ onCancelForm }) {
             const result = await res.json();
             Alert.alert('✅', result.mensaje);
             setCargando(false)
-            onCancelForm(); // cerrar formulario
+            // onCancelForm(); // cerrar formulario
         } catch (error) {
             console.error(error);
             Alert.alert('❌', 'Error al guardar ciudad');
         }
     };
 
-    useEffect(() => {
-        return () => {
-            mapRef.current = null; // limpia la referencia
-        };
-    }, []);
-
     if (cargando) { return (<CargandoOverlay />) }
 
     return (
         <View style={{ padding: 10 }}>
-            <Text style={{ ...styles.titles, fontSize: 18, marginBottom: 30 }}>Formulario para diversion</Text>
+            <Text style={{ ...styles.titles, fontSize: 18, marginBottom: 30 }}>Formulario para restaurantes</Text>
 
-            <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre de la diversion" placeholderTextColor="#aaa" />
+            <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Nombre del restaurante" placeholderTextColor="#aaa" />
             <TextInput style={styles.input} value={pais} onChangeText={setPais} placeholder="País" placeholderTextColor="#aaa" />
-            <TextInput style={styles.input} value={provincia} onChangeText={setProvincia} placeholder="Provincia de la diversion" placeholderTextColor="#aaa" />
+            <TextInput style={styles.input} value={provincia} onChangeText={setProvincia} placeholder="Provincia" placeholderTextColor="#aaa" />
+            <TextInput style={styles.input} value={ciudad} onChangeText={setCiudad} placeholder="Ciudad" placeholderTextColor="#aaa" />
 
             <TextInput style={[styles.input, { height: 100 }]} value={descripcion} onChangeText={setDescripcion} placeholder="Descripción" placeholderTextColor="#aaa" multiline />
             <View style={styles.containerNetworks}>
                 <View style={styles.rowNetworks}>
-                    {/* <Icon name="facebook" size={27} color="#007AFF" /> */}
+                    <Icon name="facebook" size={27} color="#007AFF" />
                     <TextInput
                         style={{ ...styles.input, width: '90%', marginBottom: 0 }}
                         value={facebook}
@@ -244,7 +232,7 @@ function FormularioDiversion({ onCancelForm }) {
                     />
                 </View>
                 <View style={styles.rowNetworks}>
-                    {/* <Icon name="instagram" size={25} color="#C13584" /> */}
+                    <Icon name="instagram" size={25} color="#C13584" />
                     <TextInput
                         style={{ ...styles.input, width: '90%', marginBottom: 0 }}
                         value={instagram}
@@ -254,7 +242,7 @@ function FormularioDiversion({ onCancelForm }) {
                     />
                 </View>
                 <View style={styles.rowNetworks}>
-                    {/* <Icon2 name="tiktok" size={20} color="#FE2C55" /> */}
+                    <Icon2 name="tiktok" size={20} color="#FE2C55" />
                     <TextInput
                         style={{ ...styles.input, width: '90%', marginBottom: 0 }}
                         value={tiktok}
@@ -264,7 +252,7 @@ function FormularioDiversion({ onCancelForm }) {
                     />
                 </View>
                 <View style={styles.rowNetworks}>
-                    {/* <Icon name="globe" size={20} color="#ffffffff" /> */}
+                    <Icon name="globe" size={20} color="#ffffffff" />
                     <TextInput
                         style={{ ...styles.input, width: '90%', marginBottom: 0 }}
                         value={paginaWeb}
@@ -274,12 +262,32 @@ function FormularioDiversion({ onCancelForm }) {
                     />
                 </View>
                 <View style={styles.rowNetworks}>
-                    {/* <Icon name="whatsapp" size={20} color="#25D366" /> */}
+                    <Icon name="whatsapp" size={20} color="#25D366" />
                     <TextInput
                         style={{ ...styles.input, width: '90%', marginBottom: 0 }}
                         value={whatsapp}
                         onChangeText={setWhatsapp}
                         placeholder="Ingresa tu numero de whatsapp"
+                        placeholderTextColor="#747474ff"
+                    />
+                </View>
+                <View style={styles.rowNetworks}>
+                    <Icon name="envelope" size={20} color="#fff" />
+                    <TextInput
+                        style={{ ...styles.input, width: '90%', marginBottom: 0 }}
+                        value={whatsapp}
+                        onChangeText={setWhatsapp}
+                        placeholder="Correo o contacto"
+                        placeholderTextColor="#747474ff"
+                    />
+                </View>
+                <View style={styles.rowNetworks}>
+                    <Icon name="mobile" size={30} color="#fff" />
+                    <TextInput
+                        style={{ ...styles.input, width: '90%', marginBottom: 0, marginLeft: 3 }}
+                        value={celular}
+                        onChangeText={setCelular}
+                        placeholder="Celular"
                         placeholderTextColor="#747474ff"
                     />
                 </View>
@@ -291,7 +299,7 @@ function FormularioDiversion({ onCancelForm }) {
             <View style={styles.containerNetworks}>
                 <Text style={styles.label}>Servicios disponibles</Text>
                 <View style={styles.grid}>
-                    {SERVICIOS.map((servicio) => (
+                    {SERVICIOS_REST.map((servicio) => (
                         <TouchableOpacity
                             key={servicio}
                             style={[
@@ -333,7 +341,7 @@ function FormularioDiversion({ onCancelForm }) {
             <View style={{ flexDirection: 'row' }}>
                 <TouchableOpacity
                     style={{ ...styles.saveButton, width: '48%', marginRight: '4%' }}
-                    onPress={guardarDiversion}
+                    onPress={guardarRestaurante}
                 >
                     <Text style={styles.saveText}>Guardar</Text>
                 </TouchableOpacity>
@@ -348,7 +356,7 @@ function FormularioDiversion({ onCancelForm }) {
     );
 }
 
-export default FormularioDiversion;
+export default FormularioRestaurante;
 
 
 const styles = StyleSheet.create({

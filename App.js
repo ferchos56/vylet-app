@@ -1,32 +1,33 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { TouchableOpacity } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { UserProvider } from "./contextos/UserProvider.js";
 import { AuthProvider } from "./contextos/authProvider.js";
-import { AdminProvider } from './contextos/AdminProvider.js';
+import { AdminProvider } from "./contextos/AdminProvider.js";
+import { HotelProvider } from "./contextos/HotelProvider.js";
 
 // Screens
-import HomeScreem from "./screems/HomeScreem.js";
-import RegistrarUsu from "./screems/RegistrarUsu.js";
-import LoginUsu from "./screems/loginUsu.js";
-import PantallaUno from "./screems/PantallaUno.js";
-import Ciudades from "./screems/ciudades.js";
-import ciudad from "./screems/ciudad.js";
-import turismo from "./screems/turismo.js";
-import detalleDestino from "./screems/detalleDestino.js";
-import hoteles from "./screems/hoteles.js";
-import detalleHotel from "./screems/detallesHotel.js";
-import detallesFiestas from "./screems/detallesFiestas.js";
-import DetallesRestaurantes from "./screems/detallesRestaurantes.js";
-import fiestas from "./screems/Fiestas.js";
-import buses from "./screems/buses.js";
-import detalleBus from "./screems/detallesBus.js";
+import HomeScreem from "./screens/HomeScreem.js";
+import RegistrarUsu from "./screens/RegistrarUsu.js";
+import LoginUsu from "./screens/loginUsu.js";
+import PantallaUno from "./screens/PantallaUno.js";
+import Ciudades from "./screens/user/ciudad/DetallesCiudad.js";
+import ciudad from "./screens/user/ciudad/Ciudades.js";
+import turismo from "./screens/user/turismo/Turismo.js";
+import detalleDestino from "./screens/user/turismo/DetallesTurismo.js";
+import hoteles from "./screens/user/hotel/Hoteles.js";
+import detalleHotel from "./screens/user/hotel/DetallesHotel.js";
+import DetallesFiestas from "./screens/user/festividad/DetallesFiestas.js";
+import DetallesRestaurantes from "./screens/user/restaurante/DetallesRestaurantes.js"
+import Fiestas from "./screens/user/festividad/Fiestas.js";
+import buses from "./screens/user/buses/Buses.js";
+import detalleBus from "./screens/user/buses/DetallesBuses.js";
 import PerfilModal from "./componets/PerfilModal.js";
 import MiInformacion from "./componets/MiInformacion.js";
 import Camara from './componets/Camara.js';
@@ -34,16 +35,20 @@ import GestionUsuarios from './componets/admin/gestion_usu.js';
 import EditarUsuario from './componets/admin/EditarUsuario.js';
 import PanelAdmin from './componets/admin/panel_admin.js';
 import DetallesMenu from './componets/DetallesMenu.js';
-import Diversion from './screems/Diversion.js';
-import Restaurantes from './screems/Restaurantes.js';
-import Pruebas from './screems/Pruebas.js';
+import Diversion from './screens/user/divercion/Diversion.js';
+import Restaurantes from './screens/user/restaurante/Restaurantes.js';
+import Pruebas from './screens/Pruebas.js';
+
+import PermisosScreen from './screens/PermisosScreen.js';
+
 import FormularioEdicionCiudad from './componets/admin/formularios/FormularioEdicionCiudad.js';
+import FormularioEdicionDiversion from './componets/admin/formularios/FormularioEdicionDiversion.js';
+import FormularioEdicionHoteles from './componets/admin/formularios/hotel/FormularioEdicionHoteles.js';
 
 const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
 
-// ✅ Header con ícono de perfil
-const withProfileIcon = (title) => ({ navigation }) => ({
+// Encabezado base
+const baseHeader = (title) => ({
   title,
   headerStyle: {
     backgroundColor: '#061529ff',
@@ -53,94 +58,224 @@ const withProfileIcon = (title) => ({ navigation }) => ({
   },
   headerTintColor: '#fff',
   headerTitleStyle: {
-    color: '#ffffffff',
+    color: '#fff',
     fontWeight: 'bold',
     marginLeft: 200,
   },
-  headerRight: () => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('PerfilModal')}
-      style={{ marginRight: 16 }}
-    >
-      <Icon name="account" size={30} color="#fff" />
-    </TouchableOpacity>
-  ),
 });
 
-// ✅ Pantalla principal con ícono de perfil
-function PantallaUnoStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="PantallaUno"
-        component={PantallaUno}
-        options={({ navigation }) => ({
-          ...withProfileIcon('VILET')({ navigation }),
-          headerLeft: () => null,
-        })}
-      />
-    </Stack.Navigator>
-  );
-}
-
-// ✅ Drawer envuelve PantallaUno
-function DrawerNavigator() {
-  return (
-    <Drawer.Navigator screenOptions={{ headerShown: false }}>
-      <Drawer.Screen name="Inicio" component={PantallaUnoStack} />
-    </Drawer.Navigator>
-  );
+// Protección contra errores de render
+function SafeRender({ children }) {
+  try {
+    return children;
+  } catch (error) {
+    console.error('Error de render:', error);
+    return <Text style={{ color: 'red', padding: 20 }}>Error al cargar componente</Text>;
+  }
 }
 
 export default function App() {
-  // const { userToken } = useContext(AuthContext);
-  // useEffect(() => { console.log(userToken) }, [userToken]);
+  const [esPrimeraVez, setEsPrimeraVez] = useState(null);
+
+  useEffect(() => {
+    const verificarPrimerInicio = async () => {
+      const valor = await AsyncStorage.getItem('esPrimeraVez');
+      if (valor === null) {
+        await AsyncStorage.setItem('esPrimeraVez', 'false');
+        setEsPrimeraVez(true);
+      } else {
+        setEsPrimeraVez(false);
+      }
+    };
+    verificarPrimerInicio();
+  }, []);
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <AdminProvider>
           <UserProvider>
-            <NavigationContainer>
-              <Stack.Navigator>
-                {/* Auth screens */}
-                <Stack.Screen name="HomeScreem" component={HomeScreem} options={{ headerShown: false }} />
-                <Stack.Screen name="LoginUsu" component={LoginUsu} options={{ headerShown: false }} />
-                <Stack.Screen name="RegistrarUsu" component={RegistrarUsu} options={{ headerShown: false }} />
-                {/* Modal */}
-                <Stack.Screen name="PerfilModal" component={PerfilModal} options={{ presentation: 'transparentModal', headerShown: false }} />
+            <HotelProvider>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName={esPrimeraVez ? 'permisos' : 'HomeScreem'}>
+                  <Stack.Screen name="permisos" component={PermisosScreen} options={{ headerShown: false }} />
+                  <Stack.Screen name="HomeScreem" component={HomeScreem} options={{ headerShown: false }} />
+                  <Stack.Screen name="LoginUsu" component={LoginUsu} options={{ headerShown: false }} />
+                  <Stack.Screen name="RegistrarUsu" component={RegistrarUsu} options={{ headerShown: false }} />
+                  <Stack.Screen name="PerfilModal" component={PerfilModal} options={{ presentation: 'transparentModal', headerShown: false }} />
+                  <Stack.Screen name="Inicio" component={PantallaUno} options={{ headerShown: false }} />
+                  <Stack.Screen name="pruebas" component={Pruebas} options={{ headerShown: false }} />
+                  {/* ... el resto de tus pantallas */}
+                  {/* Pantallas con ícono de perfil */}
+                  <Stack.Screen name="restaurantes" component={Restaurantes} options={({ navigation }) => ({
+                    ...baseHeader('Restaurantes'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="diversion" component={Diversion} options={({ navigation }) => ({
+                    ...baseHeader('Diversión'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detallesMenu" component={DetallesMenu} options={({ navigation }) => ({
+                    ...baseHeader('Detalles del menú'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="GestionUsuarios" component={GestionUsuarios} options={({ navigation }) => ({
+                    ...baseHeader('Gestión de usuarios'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="Ciudades" component={Ciudades} options={({ navigation }) => ({
+                    ...baseHeader('Ciudades'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="ciudad" component={ciudad} options={({ navigation }) => ({
+                    ...baseHeader('Ciudad'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="hoteles" component={hoteles} options={({ navigation }) => ({
+                    ...baseHeader('Hoteles'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="turismo" component={turismo} options={({ navigation }) => ({
+                    ...baseHeader('Turismo'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detalleDestino" component={detalleDestino} options={({ navigation }) => ({
+                    ...baseHeader('Destino'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detalleHotel" component={detalleHotel} options={({ navigation }) => ({
+                    ...baseHeader('Hotel'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detallesFiestas" component={DetallesFiestas} options={({ navigation }) => ({
+                    ...baseHeader('Fiesta'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detallesRestaurantes" component={DetallesRestaurantes} options={({ navigation }) => ({
+                    ...baseHeader('Restaurante'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="fiestas" component={Fiestas} options={({ navigation }) => ({
+                    ...baseHeader('Fiestas'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="buses" component={buses} options={({ navigation }) => ({
+                    ...baseHeader('Buses'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="detalleBus" component={detalleBus} options={({ navigation }) => ({
+                    ...baseHeader('Bus'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="EditarUsuario" component={EditarUsuario} options={({ navigation }) => ({
+                    ...baseHeader('EditarUsuario'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
 
-                {/* Drawer entry point */}
-                <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
+                  <Stack.Screen name="PanelAdmin" options={({ navigation }) => ({
+                    ...baseHeader('PanelAdmin'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })}>
+                    {() => (
+                      <SafeRender>
+                        <PanelAdmin />
+                      </SafeRender>
+                    )}
+                  </Stack.Screen>
 
-                {/* Screens con ícono de perfil */}
-                <Stack.Screen name="pruebas" component={Pruebas} options={({ navigation }) => withProfileIcon('Pruebas')({ navigation })} />
-                <Stack.Screen name="restaurantes" component={Restaurantes} options={({ navigation }) => withProfileIcon('Restaurantes')({ navigation })} />
-                <Stack.Screen name="diversion" component={Diversion} options={({ navigation }) => withProfileIcon('Diversion')({ navigation })} />
-                <Stack.Screen name="detallesMenu" component={DetallesMenu} options={({ navigation }) => withProfileIcon('Detalles del menu')({ navigation })} />
-                <Stack.Screen name="GestionUsuarios" component={GestionUsuarios} options={({ navigation }) => withProfileIcon('GestionUsuarios')({ navigation })} />
-                <Stack.Screen name="Ciudades" component={Ciudades} options={({ navigation }) => withProfileIcon('Ciudades')({ navigation })} />
-                <Stack.Screen name="ciudad" component={ciudad} options={({ navigation }) => withProfileIcon('Ciudad')({ navigation })} />
-                <Stack.Screen name="hoteles" component={hoteles} options={({ navigation }) => withProfileIcon('Hoteles')({ navigation })} />
-                <Stack.Screen name="turismo" component={turismo} options={({ navigation }) => withProfileIcon('Turismo')({ navigation })} />
-                <Stack.Screen name="detalleDestino" component={detalleDestino} options={({ navigation }) => withProfileIcon('Destino')({ navigation })} />
-                <Stack.Screen name="detalleHotel" component={detalleHotel} options={({ navigation }) => withProfileIcon('Hotel')({ navigation })} />
-                <Stack.Screen name="detallesFiestas" component={detallesFiestas} options={({ navigation }) => withProfileIcon('Fiesta')({ navigation })} />
-                <Stack.Screen name="detallesRestaurantes" component={DetallesRestaurantes} options={({ navigation }) => withProfileIcon('Restaurante')({ navigation })} />
-                <Stack.Screen name="fiestas" component={fiestas} options={({ navigation }) => withProfileIcon('Fiestas')({ navigation })} />
-                <Stack.Screen name="buses" component={buses} options={({ navigation }) => withProfileIcon('Buses')({ navigation })} />
-                <Stack.Screen name="detalleBus" component={detalleBus} options={({ navigation }) => withProfileIcon('Bus')({ navigation })} />
-                <Stack.Screen name="EditarUsuario" component={EditarUsuario} options={({ navigation }) => withProfileIcon('EditarUsuario')({ navigation })} />
-                <Stack.Screen name="PanelAdmin" component={PanelAdmin} options={({ navigation }) => withProfileIcon('PanelAdmin')({ navigation })} />
+                  <Stack.Screen name="formularioEdicionCiudad" component={FormularioEdicionCiudad} options={({ navigation }) => ({
+                    ...baseHeader('Edicion'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="formularioEdicionDiversion" component={FormularioEdicionDiversion} options={({ navigation }) => ({
+                    ...baseHeader('Edicion'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
+                  <Stack.Screen name="formularioEdicionHoteles" component={FormularioEdicionHoteles} options={({ navigation }) => ({
+                    ...baseHeader('Edicion'),
+                    headerRight: () => (
+                      <TouchableOpacity onPress={() => navigation.navigate('PerfilModal')} style={{ marginRight: 16 }}>
+                        <Icon name="account" size={30} color="#fff" />
+                      </TouchableOpacity>
+                    ),
+                  })} />
 
-                <Stack.Screen name="formularioEdicionCiudad" component={FormularioEdicionCiudad} options={({ navigation }) => withProfileIcon('Edicion')({ navigation })} />
-                  
-               
-
-                {/* MiInformacion SIN ícono de perfil */}
-                <Stack.Screen
-                  name="MiInformacion"
-                  component={MiInformacion}
-                  options={{
+                  <Stack.Screen name="MiInformacion" component={MiInformacion} options={{
                     title: 'Mi Información',
                     headerStyle: {
                       backgroundColor: '#061529ff',
@@ -150,18 +285,17 @@ export default function App() {
                     },
                     headerTintColor: '#fff',
                     headerTitleStyle: {
-                      color: '#ffffffff',
+                      color: '#fff',
                       fontWeight: 'bold',
                       marginLeft: 200,
                     },
-                  }}
-                />
+                  }} />
 
-                {/* Camara sin header */}
-                <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
+                  <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
 
-              </Stack.Navigator>
-            </NavigationContainer>
+                </Stack.Navigator>
+              </NavigationContainer>
+            </HotelProvider>
           </UserProvider>
         </AdminProvider>
       </AuthProvider>

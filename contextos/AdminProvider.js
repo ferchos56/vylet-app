@@ -27,19 +27,22 @@ export const AdminProvider = ({ children }) => {
   });
 
   const [ciudades, setCiudades] = useState([]);
+  const [diversiones, setDiversiones] = useState([])
+  const [restaurantes, setRestaurantes] = useState([])
+  const [hoteles, setHoteles] = useState([])
   const [cargando, setCargando] = useState(true);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [climaActual, setClimaActual] = useState(null);
-  
+
 
 
   const mapRef = useRef(null);
 
-  const obtenerDiversion = async (pagina = 1, limite = 6) => {
-    setCargando (true);
+  const obtenerRestaurantes = async (pagina = 1, limite = 6) => {
+    setCargando(true);
     try {
-      const response = await fetch(`${API_URL}/ciudades?pagina=${pagina}&limite=${limite}`);
+      const response = await fetch(`${API_URL}/restaurantes?pagina=${pagina}&limite=${limite}`);
 
       if (response.status === 304) {
         console.log('No hay cambios en ciudades (304)');
@@ -50,28 +53,94 @@ export const AdminProvider = ({ children }) => {
         console.log('Error HTTP:', response.status);
         return;
       }
-      
-
       const data = await response.json();
 
-      if (!Array.isArray(data.ciudades)) {
+      if (!Array.isArray(data.restaurantes)) {
         console.log('Respuesta inesperada:', data);
         return;
       }
 
-      setCiudades(data.ciudades);
+      setRestaurantes(data.restaurantes);
       setPaginaActual(data.pagina);
       setTotalPaginas(data.totalPaginas);
       setCargando(false);
     } catch (error) {
-      console.error('Error al obtener ciudades:', error);
+      console.error('Error al obtener diversiones en adminProvider:', error);
     } finally {
       setCargando(false);
     }
   }
 
-  const obtenerCiudades = async (pagina = 1, limite = 6) => {
-    setCargando (true);
+  const obtenerDiversion = async (pagina = 1, limite = 6) => {
+    setCargando(true);
+    try {
+      const response = await fetch(`${API_URL}/diversion?pagina=${pagina}&limite=${limite}`);
+
+      if (response.status === 304) {
+        console.log('No hay cambios en ciudades (304)');
+        return;
+      }
+
+      if (!response.ok) {
+        console.log('Error HTTP:', response.status);
+        return;
+      }
+      const data = await response.json();
+
+      if (!Array.isArray(data.diversiones)) {
+        console.log('Respuesta inesperada:', data);
+        return;
+      }
+
+      setDiversiones(data.diversiones);
+      setPaginaActual(data.pagina);
+      setTotalPaginas(data.totalPaginas);
+      setCargando(false);
+    } catch (error) {
+      console.error('Error al obtener diversiones en adminProvider:', error);
+    } finally {
+      setCargando(false);
+    }
+  }
+
+  const obtenerHoteles = async (pagina = 1, limite = 6) => {
+    setCargando(true);
+    try {
+      const response = await fetch(`${API_URL}/hoteles?pagina=${pagina}&limite=${limite}`);
+
+      if (response.status === 304) {
+        console.log('No hay cambios en ciudades (304)');
+        return;
+      }
+
+      if (!response.ok) {
+        console.log('Error HTTP:', response.status);
+        return;
+      }
+
+
+      const data = await response.json();
+
+      
+
+      if (!Array.isArray(data.hoteles)) {
+        console.log('Respuesta inesperada:', data);
+        return;
+      }
+
+      setHoteles(data.hoteles);
+      setPaginaActual(data.pagina);
+      setTotalPaginas(data.totalPaginas);
+      setCargando(false);
+    } catch (error) {
+      console.error('Error al obtener hoteles en adminProvider:', error);
+    } finally {
+      setCargando(false);
+    }
+  }
+
+  const obtenerCiudades = async (pagina = 1, limite = 8) => {
+    setCargando(true);
     try {
       const response = await fetch(`${API_URL}/ciudades?pagina=${pagina}&limite=${limite}`);
 
@@ -84,7 +153,7 @@ export const AdminProvider = ({ children }) => {
         console.log('Error HTTP:', response.status);
         return;
       }
-      
+
 
       const data = await response.json();
 
@@ -106,7 +175,6 @@ export const AdminProvider = ({ children }) => {
 
 
   const buscarDireccion = async () => {
-    setCargando(true);
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -125,23 +193,21 @@ export const AdminProvider = ({ children }) => {
         };
         setRegion(nuevaRegion);
         mapRef.current?.animateToRegion(nuevaRegion, 1000);
-        setCargando(false);
       } else {
         alert('No se encontró la dirección');
       }
     } catch (error) {
-      console.error('Error al buscar dirección:', error);
-      setCargando(false);
+      console.error('Error al buscar dirección:', error)
 
     }
   };
 
   const obtenerClimaPorCiudad = async (nombreCiudad) => {
-   setCargando(true)
+    setCargando(true)
     try {
       const response = await fetch(
         `https://www.meteosource.com/api/v1/free/point?place_id=${encodeURIComponent(nombreCiudad)}&sections=all&timezone=UTC&language=en&units=metric&key=nfch3ka4xajgicfbjfylhcr2r292si9s6rzybg7o`
-      // https://www.meteosource.com/api/v1/free/point?place_id=london&sections=all&timezone=UTC&language=en&units=metric&key=YOUR-API-KEY
+        // https://www.meteosource.com/api/v1/free/point?place_id=london&sections=all&timezone=UTC&language=en&units=metric&key=YOUR-API-KEY
 
       );
 
@@ -184,6 +250,12 @@ export const AdminProvider = ({ children }) => {
         mapRef,
         climaActual,
         obtenerClimaPorCiudad,
+        obtenerDiversion,
+        diversiones,
+        obtenerHoteles,
+        hoteles,
+        obtenerRestaurantes,
+        restaurantes
       }}
     >
       {children}

@@ -93,7 +93,7 @@ export default function MiInformacion({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.fotoContainer}>
           <Image
-            source={foto ? { uri: foto } : require('../assets/user.png')}
+            source={foto ? { uri: foto } : require('../assets/vyletlogo.jpg')}
             style={styles.foto}
           />
           <TouchableOpacity
