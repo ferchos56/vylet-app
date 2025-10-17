@@ -7,24 +7,42 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../contextos/authProvider.js";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from "../styles/colors.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { UserContext } from "../contextos/UserProvider.js";
+
 
 const { width } = Dimensions.get("window");
 
 export default function Configuraciones() {
+  const navigation = useNavigation();
+  const { userToken, checkUserToken } = useAuth();
+  const { usuario, dataUsuario } = useContext(UserContext);
+
+  const cerrarSesion = async () => {
+    await AsyncStorage.multiRemove([
+      'token',
+      'identificador',
+      'tipo_usuario',
+      'nombre_usuario',
+    ]);
+    await dataUsuario();
+    await checkUserToken();
+    navigation.navigate('LoginUsu');
+  };
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["bottom", "left", "right"]}>
       <View style={styles.container}>
-        <View style={{ padding: 10 }}>
+        {/* <View style={{ padding: 10 }}>
           <Text style={{ ...styles.title }}>VYLET</Text>
           <Text style={{ ...styles.title, fontSize: 13, color: "#ffffff75"}}>Configuraciones</Text>
-        </View>
+        </View> */}
 
         <View style={styles.bodyConfig}>
           <View
@@ -33,11 +51,12 @@ export default function Configuraciones() {
               gap: 1,
             }}
           >
-            <TouchableOpacity style={styles.touchableSettingsBody}>
+            <TouchableOpacity style={styles.touchableSettingsBody} onPress={() => {navigation.navigate("informacionPersonalConfig")}}>
               <MaterialCommunityIcons
                 name="account-details"
                 size={24}
                 color="#fff"
+                
               />
               <Text
                 style={{ ...styles.title, fontSize: 14, color: "#ffffffff" }}
@@ -46,7 +65,7 @@ export default function Configuraciones() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.touchableSettingsBody}>
+            <TouchableOpacity style={styles.touchableSettingsBody} onPress={() => {navigation.navigate("seguridadConfig")}}>
              <MaterialCommunityIcons name="lock" size={24} color="#fff" />
 
               <Text
@@ -56,7 +75,7 @@ export default function Configuraciones() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.touchableSettingsBody}>
+            <TouchableOpacity style={styles.touchableSettingsBody} onPress={() => {Linking.openURL("https://play.google.com/store/")}}>
               <MaterialCommunityIcons name="star" size={24} color="#fff" />
 
               <Text
@@ -98,7 +117,7 @@ export default function Configuraciones() {
 
             
 
-            <TouchableOpacity style={{...styles.touchableSettingsBody, marginTop: 20, backgroundColor: "#b10000ff"}}>
+            <TouchableOpacity style={{...styles.touchableSettingsBody, marginTop: 20, backgroundColor: "#b10000ff"}} onPress={cerrarSesion}>
               <MaterialCommunityIcons name="logout" size={24} color="#fff" />
 
               <Text

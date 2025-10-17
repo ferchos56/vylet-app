@@ -66,6 +66,7 @@ const PantallaUno = () => {
   const { usuario, cargandoLocalizacion, getLocation, location } = useUser();
   const { userToken, checkUserToken } = useAuth();
   const [imagen, setImagen] = useState(null);
+  const [flatListReady, setFlatListReady] = useState(false);
   const flatListRef = useRef();
 
   const obtenerFotoPerfil = () => {
@@ -102,6 +103,8 @@ const PantallaUno = () => {
   }, []);
 
   useEffect(() => {
+    if (!flatListReady) return;
+
     const scroll = () => {
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({
@@ -110,19 +113,18 @@ const PantallaUno = () => {
         });
 
         setTimeout(() => {
-          flatListRef.current.scrollToOffset({
+          flatListRef.current?.scrollToOffset({
             offset: width * 2,
             animated: true,
           });
-        }, 2000); // tiempo entre desplazamientos
+        }, 2000);
       }
     };
 
-    // Esperar un poco antes de iniciar
     const timer = setTimeout(scroll, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [flatListReady]);
 
   const renderItem = ({ item }) => {
     const isVerMas = item.isVerMas;
@@ -244,6 +246,9 @@ const PantallaUno = () => {
         <View style={{ marginVertical: 10 }}>
           <FlatList
             ref={flatListRef}
+            onLayout={() => {
+              setFlatListReady(true);
+            }}
             data={banners}
             horizontal
             pagingEnabled

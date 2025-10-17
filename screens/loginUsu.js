@@ -16,6 +16,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../contextos/UserProvider';
 import { useAuth } from '../contextos/authProvider';
+import { colors } from '../styles/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 const LoginUsu = () => {
@@ -79,7 +81,7 @@ const LoginUsu = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom', 'left', 'right']}>
-      <View style={styles.container}>
+      <LinearGradient colors={['#061529ff', '#06254eff']} style={styles.container}>
         <Text style={styles.logo}>Vylet</Text>
 
         <View style={styles.inputContainer}>
@@ -140,7 +142,7 @@ const LoginUsu = () => {
         </View>
 
         <Text style={styles.version}>VS 1.0.0</Text>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -148,7 +150,7 @@ const LoginUsu = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0a1a2f',
+    backgroundColor: colors.contenedorBg,
   },
   container: {
     flex: 1,
