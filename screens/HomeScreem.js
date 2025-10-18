@@ -9,6 +9,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ Importar
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../styles/colors';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -58,7 +60,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom', 'left', 'right']}>
 
-      <View style={styles.container}>
+      <LinearGradient colors={['#061529ff', '#06254eff']} style={styles.container}>
         <Animated.View style={[styles.logoContainer, animatedStyle]}>
           <Text style={styles.logoText}>
             Vylet <Text style={styles.pin}>📍</Text>
@@ -78,7 +80,7 @@ const HomeScreen = () => {
         </View>
 
         <Text style={styles.version}>V1.0.0</Text>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -86,7 +88,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0a1a2f', // Fondo oscuro en toda la pantalla
+    backgroundColor: colors.contenedorBg, // Fondo oscuro en toda la pantalla
   },
   container: {
     flex: 1,
