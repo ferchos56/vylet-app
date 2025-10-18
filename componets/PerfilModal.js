@@ -1,5 +1,5 @@
-import { API_URL } from '@env';
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import { API_URL } from "@env";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,17 @@ import {
   ScrollView,
   Linking,
   ActivityIndicator,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { UserContext } from '../contextos/UserProvider';
-import { useAuth } from '../contextos/authProvider';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { InteractionManager } from 'react-native';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { UserContext } from "../contextos/UserProvider";
+import { useAuth } from "../contextos/authProvider";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { InteractionManager } from "react-native";
+import { colors } from "../styles/colors";
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
 export default function PerfilModal() {
   const { userToken, checkUserToken } = useAuth();
@@ -37,14 +39,14 @@ export default function PerfilModal() {
 
   const cerrarSesion = async () => {
     await AsyncStorage.multiRemove([
-      'token',
-      'identificador',
-      'tipo_usuario',
-      'nombre_usuario',
+      "token",
+      "identificador",
+      "tipo_usuario",
+      "nombre_usuario",
     ]);
     await dataUsuario();
     await checkUserToken();
-    navigation.navigate('LoginUsu');
+    navigation.navigate("LoginUsu");
   };
 
   const navegarSeguro = (screen, params = {}) => {
@@ -63,7 +65,7 @@ export default function PerfilModal() {
 
   useEffect(() => {
     if (!userToken) {
-      navigation.reset({ index: 0, routes: [{ name: 'LoginUsu' }] });
+      navigation.reset({ index: 0, routes: [{ name: "LoginUsu" }] });
     }
   }, [userToken]);
 
@@ -72,22 +74,34 @@ export default function PerfilModal() {
   }, [usuario]);
 
   return (
-    <SafeAreaView style={styles.overlay} edges={['bottom', 'left', 'right']}>
+    <SafeAreaView style={styles.overlay} edges={["bottom", "left", "right"]}>
       <View style={styles.modalContent}>
-        <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.closeIcon}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.closeIconText}>✕</Text>
         </TouchableOpacity>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={styles.modalTitle}>Panel de Usuario</Text>
 
           {navegando && (
-            <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 10 }} />
+            <ActivityIndicator
+              size="small"
+              color="#fff"
+              style={{ marginBottom: 10 }}
+            />
           )}
 
           <View style={styles.profileRow}>
             <Image
-              source={imagen ? { uri: imagen } : require('../assets/vyletlogo.jpg')}
+              source={
+                imagen ? { uri: imagen } : require("../assets/vyletlogo.jpg")
+              }
               style={styles.profileImage}
             />
 
@@ -95,15 +109,17 @@ export default function PerfilModal() {
               {usuario ? (
                 <View style={styles.infoRow}>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.nombrePrincipal}>{usuario.nombres}</Text>
+                    <Text style={styles.nombrePrincipal}>
+                      {usuario.nombres}
+                    </Text>
                     <Text style={styles.value}>{usuario.cedula}</Text>
                   </View>
                   <TouchableOpacity
                     style={styles.infoButton}
-                    onPress={() => navegarSeguro('MiInformacion')}
+                    onPress={() => navegarSeguro("configuraciones")}
                     disabled={navegando}
                   >
-                    <Text style={styles.infoButtonText}>Mi perfil 📝</Text>
+                    <MaterialCommunityIcons name="cog" size={24} color="#fff" />
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -113,52 +129,68 @@ export default function PerfilModal() {
           </View>
 
           <View style={styles.quickActions}>
-            {usuario?.tipo_usuario === 'cliente' && (
-              <>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('Favoritos')} disabled={navegando}>
-                  <Text style={styles.actionText}>⭐ Mis favoritos</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('Configuracion')} disabled={navegando}>
-                  <Text style={styles.actionText}>⚙️ Configuración</Text>
-                </TouchableOpacity>
-              </>
-            )}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Inicio" }],
+                });
+              }}
+              disabled={navegando}
+            >
+              <MaterialCommunityIcons name="home" size={24} color="#fff" />
+              <Text style={styles.actionText}>Inicio</Text>
+            </TouchableOpacity>
+            
+            {usuario?.tipo_usuario === "cliente" && <>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navegarSeguro("Favoritos")}
+              disabled={navegando}
+            >
+              <MaterialCommunityIcons name="star" size={24} color="#fff" />
+              <Text style={styles.actionText}>Mis favoritos</Text>
+            </TouchableOpacity>
+            </>}
 
-            {usuario?.tipo_usuario === 'admin' && (
+            {usuario?.tipo_usuario === "admin" && (
               <>
-                <TouchableOpacity style={styles.actionButton} onPress={() => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Inicio' }],
-                  });
-                }} disabled={navegando}>
-                  <Text style={styles.actionText}>Inicio</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('GestionUsuarios')} disabled={navegando}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => navegarSeguro("GestionUsuarios")}
+                  disabled={navegando}
+                >
+                  <MaterialCommunityIcons name="account-group" size={24} color="#fff" />
                   <Text style={styles.actionText}>Gestión de usuarios</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('PanelAdmin')} disabled={navegando}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => navegarSeguro("PanelAdmin")}
+                  disabled={navegando}
+                >
+                  <MaterialCommunityIcons name="view-dashboard" size={24} color="#fff" />
                   <Text style={styles.actionText}>Panel administrativo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('PanelAdmin')} disabled={navegando}>
+                {/* <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('PanelAdmin')} disabled={navegando}>
                   <Text style={styles.actionText}>Registrar locales</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=-0.1175119,-78.463616`)}>
-                  <Text style={styles.actionText}>Prueba maps</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('pruebas')} disabled={navegando}>
+                </TouchableOpacity> */}
+                
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => navegarSeguro("pruebas")}
+                  disabled={navegando}
+                >
                   <Text style={styles.actionText}>Pruebas</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navegarSeguro('Configuracion')} disabled={navegando}>
-                  <Text style={styles.actionText}>⚙️ Configuración</Text>
-                </TouchableOpacity>
+                
               </>
             )}
           </View>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
+          {/* <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
             <Text style={styles.logoutText}>Cerrar sesión</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -167,12 +199,12 @@ export default function PerfilModal() {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.6)",
   },
   modalContent: {
     height: height * 0.65,
-    backgroundColor: '#0a1a2f',
+    backgroundColor: colors.contenedorBg,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     paddingHorizontal: 24,
@@ -183,26 +215,26 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   closeIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 16,
     right: 16,
     zIndex: 10,
   },
   closeIconText: {
     fontSize: 30,
-    color: '#ff0101b9',
-    backgroundColor: '#0a1a2f',
+    color: "#ff0101b9",
+    backgroundColor: "#0a1a2f",
     borderRadius: 30,
   },
   modalTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 20,
   },
   profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 30,
   },
   profileImage: {
@@ -210,37 +242,37 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: '#fff',
+    borderColor: "#fff",
+    backgroundColor: "#fff",
     marginRight: 16,
   },
   infoColumn: {
     flex: 1,
   },
   infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   nombrePrincipal: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 2,
   },
   value: {
-    color: '#afafafff',
+    color: "#afafafff",
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   infoButton: {
-    backgroundColor: '#173151',
+    backgroundColor: "#173151",
     padding: 8,
     borderRadius: 8,
     marginLeft: 10,
   },
   infoButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   quickActions: {
@@ -248,27 +280,29 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     height: 50,
-    backgroundColor: '#173151',
+    backgroundColor: "#173151",
     paddingVertical: 10,
     borderRadius: 8,
     marginBottom: 10,
     paddingHorizontal: 10,
-    justifyContent: 'center',
+    alignItems:"center",
+    flexDirection: "row",
+    gap: 5
   },
   actionText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   logoutButton: {
-    backgroundColor: '#d62828',
+    backgroundColor: "#d62828",
     paddingVertical: 10,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoutText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 15,
   },
 });
