@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+import { API_URL } from "@env";
+=======
+>>>>>>> upstream/main
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -29,9 +33,16 @@ import Fiestas from "./screens/user/festividad/Fiestas.js";
 import buses from "./screens/user/buses/Buses.js";
 import detalleBus from "./screens/user/buses/DetallesBuses.js";
 import PerfilModal from "./componets/PerfilModal.js";
+<<<<<<< HEAD
+import Notificaciones from "./screens/Notificaciones.js";
+import MiInformacion from "./componets/MiInformacion.js";
+import Camara from "./componets/Camara.js";
+import GestionUsuarios from "./screens/admin/gestion_usu.js";
+=======
 import MiInformacion from "./componets/MiInformacion.js";
 import Camara from "./componets/Camara.js";
 import GestionUsuarios from './screens/admin/gestion_usu.js'
+>>>>>>> upstream/main
 import EditarUsuario from "./componets/admin/EditarUsuario.js";
 import PanelAdmin from "./componets/admin/panel_admin.js";
 import DetallesMenu from "./componets/DetallesMenu.js";
@@ -39,6 +50,12 @@ import Diversion from "./screens/user/divercion/Diversion.js";
 import Restaurantes from "./screens/user/restaurante/Restaurantes.js";
 import Pruebas from "./screens/Pruebas.js";
 
+<<<<<<< HEAD
+
+import { useNotifications } from "./componets/useNotificaciones.js";
+// import * as Notifications from "expo-notifications";
+=======
+>>>>>>> upstream/main
 import PermisosScreen from "./screens/PermisosScreen.js";
 
 import FormularioEdicionCiudad from "./componets/admin/formularios/FormularioEdicionCiudad.js";
@@ -84,6 +101,43 @@ function SafeRender({ children }) {
 export default function App() {
   const [esPrimeraVez, setEsPrimeraVez] = useState(null);
 
+<<<<<<< HEAD
+  // const token = useNotifications({
+  //   onReceive: ({ title, body, data }) => {
+  //     // Podés mostrar un modal, guardar en estado, navegar, etc.
+  //     console.log('Noti personalizada:', title, body, data);
+  //   },
+  // });
+
+  useEffect(() => {
+    const configurarNotificaciones = async () => {
+      const cedula = await AsyncStorage.getItem("identificador");
+      if (!cedula) return; // aún no logeado
+
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") return;
+
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log("Expo Push Token:", token);
+
+      const tokenGuardado = await AsyncStorage.getItem("expoPushToken");
+
+      if (token !== tokenGuardado) {
+        await fetch(`${API_URL}/app/guardar-token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cedula, token }),
+        });
+
+        await AsyncStorage.setItem("expoPushToken", token);
+      }
+    };
+
+    // configurarNotificaciones();
+  }, []);
+
+=======
+>>>>>>> upstream/main
   useEffect(() => {
     const verificarPrimerInicio = async () => {
       const valor = await AsyncStorage.getItem("esPrimeraVez");
@@ -127,6 +181,25 @@ export default function App() {
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
+<<<<<<< HEAD
+                    name="notificaciones"
+                    component={Notificaciones}
+
+                    options={({ navigation }) => ({
+                      ...baseHeader("Notificaciones"),
+                      headerRight: () => (
+                        <TouchableOpacity
+                          onPress={() => navigation.navigate("PerfilModal")}
+                          style={{ marginRight: 16 }}
+                        >
+                          <Icon name="account" size={30} color="#fff" />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+=======
+>>>>>>> upstream/main
                     name="PerfilModal"
                     component={PerfilModal}
                     options={{
@@ -467,7 +540,10 @@ export default function App() {
                     component={InformacionPersonalConfig}
                     options={({ navigation }) => ({
                       ...baseHeader("Informacion personal"),
+<<<<<<< HEAD
+=======
                       
+>>>>>>> upstream/main
                     })}
                   />
 
@@ -476,7 +552,10 @@ export default function App() {
                     component={SeguridadConfig}
                     options={({ navigation }) => ({
                       ...baseHeader("Seguridad"),
+<<<<<<< HEAD
+=======
                       
+>>>>>>> upstream/main
                     })}
                   />
 

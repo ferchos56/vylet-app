@@ -16,7 +16,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../styles/colors.js'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+<<<<<<< HEAD
+import {  useCameraPermissions  } from 'expo-camera';
+=======
 import { Camera, CameraType, useCameraPermissions, CameraView } from 'expo-camera';
+>>>>>>> upstream/main
 import * as MediaLibrary from 'expo-media-library';
 
 
@@ -122,9 +126,13 @@ export default function PermisosScreen() {
               Otorga permisos a la aplicacion para poder obtener una mejor experiencia
             </Text>
           </View>
+<<<<<<< HEAD
+          <View >
+=======
           <View style={{
 
           }}>
+>>>>>>> upstream/main
             <TouchableOpacity style={{
               backgroundColor: colors.fristButtonBg,
               padding: 15,

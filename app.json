@@ -24,6 +24,16 @@
       }
     },
     "android": {
+<<<<<<< HEAD
+      "permissions": ["ACCESS_FINE_LOCATION"],
+      "googleServicesFile": "./android/app/google-services.json",
+      "useNextNotificationsApi": true,
+      "package": "com.ferchos56.pruebasvylet",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptiveIcon.png"
+      },
+      "edgeToEdgeEnabled": true,      
+=======
       "permissions": [
         "ACCESS_FINE_LOCATION"
       ],
@@ -32,6 +42,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.ferchos56.pruebasvylet",
+>>>>>>> upstream/main
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBtBy3lYHr_3LRqxM5JVOya2pRFMGG5OEY"
@@ -46,8 +57,14 @@
         "projectId": "79cf9dab-e46b-43c2-8ec6-968b670abf36"
       }
     },
+<<<<<<< HEAD
+    "plugins": ["expo-font", "expo-notifications"]
+  }
+}
+=======
     "plugins": [
       "expo-font"
     ]
   }
 }
+>>>>>>> upstream/main

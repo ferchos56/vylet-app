@@ -103,7 +103,11 @@ export default function InformacionPersonalConfig() {
       return;
     }
     handleInformacionForm();
+<<<<<<< HEAD
+    obtenerFotoPerfil();
+=======
     obtenerFotoPerfil()
+>>>>>>> upstream/main
   }, [usuario]);
 
   if (actualizando) {
@@ -119,7 +123,13 @@ export default function InformacionPersonalConfig() {
               <Image
                 style={styles.imageProfile}
                 source={
+<<<<<<< HEAD
+                  !imagen || imagenInvalida
+                    ? require("../assets/vyleticono.png")
+                    : { uri: imagen }
+=======
                   !imagen || imagenInvalida ? require("../assets/vyleticono.png") : { uri: imagen }
+>>>>>>> upstream/main
                 }
                 onError={(e) => setImagenInvalida(true)}
               />
@@ -131,6 +141,28 @@ export default function InformacionPersonalConfig() {
             <Text style={{ ...styles.title, fontSize: 13, color: "#ffffff75" }}>
               {usuario?.tipo_usuario}
             </Text>
+<<<<<<< HEAD
+
+            <View style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              padding: 10
+            }}>
+              <View>
+                <Text style={{...styles.title, textAlign: "center", fontSize: 20, marginBottom: 2}}>0</Text>
+                <Text style={{...styles.subtitle, width: 80, textAlign: "center", fontSize: 10, color: "#ffffff8c" }}>Lugares visitados</Text>
+              </View>
+
+              <View>
+                <Text style={{...styles.title, textAlign: "center", fontSize: 20, marginBottom: 2}}>0</Text>
+                <Text style={{...styles.subtitle, width: 80, textAlign: "center", fontSize: 10, color: "#ffffff8c" }}>Favoritos</Text>
+              </View>
+
+              
+            </View>
+=======
+>>>>>>> upstream/main
           </View>
 
           <View style={styles.bodyConfig}>
@@ -324,8 +356,15 @@ export default function InformacionPersonalConfig() {
           ) : null}
           <ImageBackground
             source={
+<<<<<<< HEAD
+              !imagen || imagenInvalida
+                ? require("../assets/vyleticono.png")
+                : { uri: imagen }
+            }
+=======
                   !imagen || imagenInvalida ? require("../assets/vyleticono.png") : { uri: imagen }
                 }
+>>>>>>> upstream/main
             style={{
               width: "100%",
               height: "70%",
@@ -355,7 +394,13 @@ export default function InformacionPersonalConfig() {
                     padding: 20,
                     borderRadius: 50,
                   }}
+<<<<<<< HEAD
+                  onPress={() =>
+                    navigation.navigate("Camara", { onSelfie: true })
+                  }
+=======
                   onPress={() => navigation.navigate('Camara',{onSelfie: true})}
+>>>>>>> upstream/main
                 >
                   <MaterialCommunityIcons
                     name="image-refresh"

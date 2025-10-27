@@ -218,7 +218,11 @@ function FormularioCiudad({ onCancelForm }) {
 
            <MapView
         ref={mapRef}
+<<<<<<< HEAD
+        
+=======
         provider="google"
+>>>>>>> upstream/main
         style={{ height: 200, marginVertical: 20 }}
         region={region}
         onPress={(e) => {
