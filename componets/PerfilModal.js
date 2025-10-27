@@ -75,12 +75,20 @@ export default function PerfilModal() {
 
   return (
     <SafeAreaView style={styles.overlay} edges={["bottom", "left", "right"]}>
+<<<<<<< HEAD
       <View style={styles.modalContent} >
+=======
+      <View style={styles.modalContent}>
+>>>>>>> upstream/main
         <TouchableOpacity
           style={styles.closeIcon}
           onPress={() => navigation.goBack()}
         >
+<<<<<<< HEAD
           <MaterialCommunityIcons name="close" size={27} color="#ff0000ff" />
+=======
+          <Text style={styles.closeIconText}>✕</Text>
+>>>>>>> upstream/main
         </TouchableOpacity>
 
         <ScrollView

@@ -24,7 +24,10 @@ import { ImageBackground } from "react-native";
 import { useUser } from "../contextos/UserProvider";
 import * as Haptics from "expo-haptics";
 import CargandoOverlay from "../componets/CargandoOverlay";
+<<<<<<< HEAD
 import * as Notifications from "expo-notifications";
+=======
+>>>>>>> upstream/main
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -103,6 +106,7 @@ const PantallaUno = () => {
     }
   }, []);
 
+<<<<<<< HEAD
   
 
   useEffect(() => {
@@ -116,6 +120,8 @@ const PantallaUno = () => {
     return () => subscription.remove();
   }, []);
 
+=======
+>>>>>>> upstream/main
   useEffect(() => {
     if (!flatListReady) return;
 
@@ -246,7 +252,11 @@ const PantallaUno = () => {
               {/* <TouchableOpacity>
                 <MaterialCommunityIcons name="magnify" size={28} color="#fff" />
               </TouchableOpacity> */}
+<<<<<<< HEAD
               <TouchableOpacity onPress={() => navigation.navigate("notificaciones")}>
+=======
+              <TouchableOpacity>
+>>>>>>> upstream/main
                 <MaterialCommunityIcons
                   name="bell-ring"
                   size={25}

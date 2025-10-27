@@ -10,7 +10,10 @@ web-build/
 expo-env.d.ts
 build/
 .env
+<<<<<<< HEAD
 android/
+=======
+>>>>>>> upstream/main
 
 # Native
 .kotlin/

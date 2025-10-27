@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, Dimensions, Text } from 'react-native';
+<<<<<<< HEAD
 import { colors } from '../styles/colors';
+=======
+>>>>>>> upstream/main
 
 const CargandoOverlay = ({message}) => {
   return (
@@ -14,7 +17,10 @@ const CargandoOverlay = ({message}) => {
 
 const styles = StyleSheet.create({
   overlay: {
+<<<<<<< HEAD
     backgroundColor: colors.contenedorBg,
+=======
+>>>>>>> upstream/main
     position: 'absolute',
     width: Dimensions.get('window').width ,
     height: Dimensions.get('window').height ,    

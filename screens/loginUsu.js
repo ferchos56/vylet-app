@@ -18,7 +18,10 @@ import { UserContext } from '../contextos/UserProvider';
 import { useAuth } from '../contextos/authProvider';
 import { colors } from '../styles/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+<<<<<<< HEAD
 import { configurarNotificaciones } from '../utils/isToken'; 
+=======
+>>>>>>> upstream/main
 
 
 const LoginUsu = () => {
@@ -62,7 +65,10 @@ const LoginUsu = () => {
     }
 
     await dataUsuario()
+<<<<<<< HEAD
     configurarNotificaciones(identificador)
+=======
+>>>>>>> upstream/main
     navigation.reset({
       index: 0,
       routes: [{ name: 'Inicio' }],

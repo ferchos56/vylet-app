@@ -103,7 +103,11 @@ export default function InformacionPersonalConfig() {
       return;
     }
     handleInformacionForm();
+<<<<<<< HEAD
     obtenerFotoPerfil();
+=======
+    obtenerFotoPerfil()
+>>>>>>> upstream/main
   }, [usuario]);
 
   if (actualizando) {
@@ -119,9 +123,13 @@ export default function InformacionPersonalConfig() {
               <Image
                 style={styles.imageProfile}
                 source={
+<<<<<<< HEAD
                   !imagen || imagenInvalida
                     ? require("../assets/vyleticono.png")
                     : { uri: imagen }
+=======
+                  !imagen || imagenInvalida ? require("../assets/vyleticono.png") : { uri: imagen }
+>>>>>>> upstream/main
                 }
                 onError={(e) => setImagenInvalida(true)}
               />
@@ -133,6 +141,7 @@ export default function InformacionPersonalConfig() {
             <Text style={{ ...styles.title, fontSize: 13, color: "#ffffff75" }}>
               {usuario?.tipo_usuario}
             </Text>
+<<<<<<< HEAD
 
             <View style={{
               flexDirection: "row",
@@ -152,6 +161,8 @@ export default function InformacionPersonalConfig() {
 
               
             </View>
+=======
+>>>>>>> upstream/main
           </View>
 
           <View style={styles.bodyConfig}>
@@ -345,10 +356,15 @@ export default function InformacionPersonalConfig() {
           ) : null}
           <ImageBackground
             source={
+<<<<<<< HEAD
               !imagen || imagenInvalida
                 ? require("../assets/vyleticono.png")
                 : { uri: imagen }
             }
+=======
+                  !imagen || imagenInvalida ? require("../assets/vyleticono.png") : { uri: imagen }
+                }
+>>>>>>> upstream/main
             style={{
               width: "100%",
               height: "70%",
@@ -378,9 +394,13 @@ export default function InformacionPersonalConfig() {
                     padding: 20,
                     borderRadius: 50,
                   }}
+<<<<<<< HEAD
                   onPress={() =>
                     navigation.navigate("Camara", { onSelfie: true })
                   }
+=======
+                  onPress={() => navigation.navigate('Camara',{onSelfie: true})}
+>>>>>>> upstream/main
                 >
                   <MaterialCommunityIcons
                     name="image-refresh"
